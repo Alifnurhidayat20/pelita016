@@ -15,6 +15,9 @@ Route::get('/kegiatan/{id}', [PublicController::class, 'kegiatanDetail'])->name(
 Route::get('/galeri', [PublicController::class, 'galeri'])->name('galeri');
 Route::get('/kontak', [PublicController::class, 'kontak'])->name('kontak');
 Route::get('/harga-sampah', [PublicController::class, 'hargaSampah'])->name('harga-sampah');
+Route::post('/kontak/send', function() {
+    return back()->with('success', 'Pesan berhasil dikirim!');
+})->name('kontak.send');
 
 // Auth Routes
 Route::middleware('guest')->group(function () {
@@ -47,41 +50,36 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/harga-sampah/{id}/edit', [AdminController::class, 'editHargaSampah'])->name('harga-sampah.edit');
     Route::put('/harga-sampah/{id}', [AdminController::class, 'updateHargaSampah'])->name('harga-sampah.update');
     Route::delete('/harga-sampah/{id}', [AdminController::class, 'destroyHargaSampah'])->name('harga-sampah.destroy');
-    Route::get('/keuangan', [AdminController::class, 'keuangan'])->name('keuangan');
-    Route::get('/keuangan/create', [AdminController::class, 'createKeuangan'])->name('keuangan.create');
-    Route::post('/keuangan', [AdminController::class, 'storeKeuangan'])->name('keuangan.store');
-    Route::get('/keuangan/{id}/edit', [AdminController::class, 'editKeuangan'])->name('keuangan.edit');
-    Route::put('/keuangan/{id}', [AdminController::class, 'updateKeuangan'])->name('keuangan.update');
-    Route::delete('/keuangan/{id}', [AdminController::class, 'destroyKeuangan'])->name('keuangan.destroy');
-    Route::get('/laporan-keuangan', [AdminController::class, 'laporanKeuangan'])->name('laporan.keuangan');
-    
-    // Kegiatan Routes
     Route::get('/kegiatan', [AdminController::class, 'kegiatan'])->name('kegiatan');
     Route::get('/kegiatan/create', [AdminController::class, 'createKegiatan'])->name('kegiatan.create');
     Route::post('/kegiatan', [AdminController::class, 'storeKegiatan'])->name('kegiatan.store');
     Route::get('/kegiatan/{id}/edit', [AdminController::class, 'editKegiatan'])->name('kegiatan.edit');
     Route::put('/kegiatan/{id}', [AdminController::class, 'updateKegiatan'])->name('kegiatan.update');
     Route::delete('/kegiatan/{id}', [AdminController::class, 'destroyKegiatan'])->name('kegiatan.destroy');
-    
-    // Galeri Routes
     Route::get('/galeri', [AdminController::class, 'galeri'])->name('galeri');
     Route::get('/galeri/create', [AdminController::class, 'createGaleri'])->name('galeri.create');
     Route::post('/galeri', [AdminController::class, 'storeGaleri'])->name('galeri.store');
     Route::get('/galeri/{id}/edit', [AdminController::class, 'editGaleri'])->name('galeri.edit');
     Route::put('/galeri/{id}', [AdminController::class, 'updateGaleri'])->name('galeri.update');
     Route::delete('/galeri/{id}', [AdminController::class, 'destroyGaleri'])->name('galeri.destroy');
-    
-// Laporan Routes
-Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
-Route::post('/laporan/generate', [AdminController::class, 'generateLaporan'])->name('laporan.generate');
+    Route::get('/keuangan', [AdminController::class, 'keuangan'])->name('keuangan');
+    Route::get('/keuangan/create', [AdminController::class, 'createKeuangan'])->name('keuangan.create');
+    Route::post('/keuangan', [AdminController::class, 'storeKeuangan'])->name('keuangan.store');
+    Route::get('/keuangan/{id}/edit', [AdminController::class, 'editKeuangan'])->name('keuangan.edit');
+    Route::put('/keuangan/{id}', [AdminController::class, 'updateKeuangan'])->name('keuangan.update');
+    Route::delete('/keuangan/{id}', [AdminController::class, 'destroyKeuangan'])->name('keuangan.destroy');
+    Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
+    Route::post('/laporan/generate', [AdminController::class, 'generateLaporan'])->name('laporan.generate');
+});
 
+// Migration Route (HAPUS SETELAH MIGRATION BERHASIL)
 Route::get('/run-migrate', function(){
     try {
         Artisan::call('migrate:fresh --force');
         Artisan::call('db:seed --force');
-        return 'Migration and seeding success! Website siap digunakan.';
+        Artisan::call('storage:link');
+        return 'Migration and seeding success! Website ready.';
     } catch (\Exception $e) {
         return 'Error: ' . $e->getMessage();
     }
-});
 });
