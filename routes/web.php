@@ -5,6 +5,7 @@ use App\Http\Controllers\PublicController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NasabahController;
 use App\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\Artisan;
 
 // Public Routes
 Route::get('/', [PublicController::class, 'index'])->name('home');
@@ -70,7 +71,17 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::put('/galeri/{id}', [AdminController::class, 'updateGaleri'])->name('galeri.update');
     Route::delete('/galeri/{id}', [AdminController::class, 'destroyGaleri'])->name('galeri.destroy');
     
-    // Laporan Routes
-    Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
-    Route::post('/laporan/generate', [AdminController::class, 'generateLaporan'])->name('laporan.generate');
+// Laporan Routes
+Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
+Route::post('/laporan/generate', [AdminController::class, 'generateLaporan'])->name('laporan.generate');
+
+Route::get('/run-migrate', function(){
+    try {
+        Artisan::call('migrate:fresh --force');
+        Artisan::call('db:seed --force');
+        return 'Migration and seeding success! Website siap digunakan.';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});
 });
